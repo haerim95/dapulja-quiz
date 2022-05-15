@@ -1,8 +1,19 @@
+import { CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
 
 function Home() {
-  const linkStyle = {
-    display: 'block'
+  const linkStyle: CSSProperties = {
+    display: 'inline-block',
+    margin: '10px',
+    width: '300px',
+    lineHeight: '50px',
+    fontSize: '1.2rem',
+    fontWeight: 'bold',
+    textDecoration: 'none',
+    borderRadius: '8px',
+    backgroundColor: '#6A67CE',
+    color: '#faf5e4',
+    cursor: 'pointer'
   }
   return (
     <>

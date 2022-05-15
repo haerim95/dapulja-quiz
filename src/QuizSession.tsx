@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { CSSProperties, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 // State
@@ -55,35 +55,139 @@ function quizSessionReducer(state: State, action: Action) {
 // View
 function QuizSessionView(state: State, onClick: (selected: string) => void) {
   function QuizView(quiz: Quiz) {
-    const articleStyle = {
-      marginTop: '16px',
-      padding: '8px',
-      background: '#efefef'
+    const articleStyle: CSSProperties = {
+      margin: '16px 1rem 0',
+      padding: '2rem',
+      background: '#ffffff',
+      borderRadius: '10px',
+      border: '1px solid #947EC3'
+    }
+    const quizAnswer: CSSProperties = {
+      marginBottom: '30px',
+      fontSize: '3rem',
+      fontWeight: 'bold',
+      color: '#947EC3'
+    }
+    const answerSelector: CSSProperties = {
+      margin: '0 5px',
+      padding: '10px 15px',
+      backgroundColor: '#B689C0',
+      color: '#ffffff',
+      borderRadius: '4px',
+      border: 'none',
+      cursor: 'pointer'
+    }
+    const linkStyle: CSSProperties = {
+      display: 'inline-block',
+      marginTop: '30px',
+      width: '200px',
+      lineHeight: '50px',
+      fontSize: '1.2rem',
+      fontWeight: 'bold',
+      textDecoration: 'none',
+      borderRadius: '8px',
+      backgroundColor: '#6A67CE',
+      color: '#faf5e4',
+      cursor: 'pointer'
     }
 
     // 퀴즈와 선택항목 부분
     return (
-      <article style={articleStyle}>
-        <header>{quiz.text}</header>
-        {quiz.selections.map((sel, idx) => {
-          return (
-            <button key={idx} onClick={() => onClick(sel)}>
-              {sel}
-            </button>
-          )
-        })}
-      </article>
+      <div>
+        <article style={articleStyle}>
+          <header style={quizAnswer}>{quiz.text}</header>
+          {quiz.selections.map((sel, idx) => {
+            return (
+              <button style={answerSelector} key={idx} onClick={() => onClick(sel)}>
+                {sel}
+              </button>
+            )
+          })}
+        </article>
+        <Link to='/' style={linkStyle}>
+          포기할래요 😭
+        </Link>
+      </div>
     )
   }
 
   const currentQuiz = state.quizList[state.currentIndex]
 
+  // 스타일 2
+  const infoStyle = {
+    title: {
+      marginBottom: '20px',
+      fontSize: '1.5rem',
+      color: '#6A67CE'
+    } as React.CSSProperties,
+    countArea: {
+      display: 'flex'
+    } as React.CSSProperties,
+    count: {
+      flexGrow: 1,
+      fontSize: '1.5rem'
+    } as React.CSSProperties,
+    completeTxt: {
+      marginTop: '5px',
+      display: 'block',
+      color: '#6A67CE'
+    } as React.CSSProperties,
+    incompleteTxt: {
+      marginTop: '5px',
+      display: 'block',
+      color: '#FF6363'
+    } as React.CSSProperties,
+    corrent: {
+      marginTop: '5px',
+      display: 'block',
+      color: '#6A67CE'
+    } as React.CSSProperties,
+    incorrent: {
+      marginTop: '5px',
+      display: 'block',
+      color: '#FF6363'
+    } as React.CSSProperties
+  }
+  const linkStyle: CSSProperties = {
+    display: 'inline-block',
+    marginTop: '30px',
+    width: '200px',
+    lineHeight: '50px',
+    fontSize: '1.2rem',
+    fontWeight: 'bold',
+    textDecoration: 'none',
+    borderRadius: '8px',
+    backgroundColor: '#6A67CE',
+    color: '#faf5e4',
+    cursor: 'pointer'
+  }
+
   return (
     <section>
-      <div>완료 여부: {state.isCompleted ? '완료' : '미완료'}</div>
-      <div>맞은 개수 {state.correctCount}</div>
-      <div>틀린 개수 {state.inCorrectCount}</div>
-      {state.isCompleted ? <Link to='/'>홈으로</Link> : QuizView(currentQuiz)}
+      <div style={infoStyle.title}>
+        오늘의 다풀자 VOCA 퀴즈{' '}
+        {state.isCompleted ? (
+          <span style={infoStyle.completeTxt}>완료</span>
+        ) : (
+          <span style={infoStyle.incompleteTxt}>미완료</span>
+        )}
+      </div>
+      <div style={infoStyle.countArea}>
+        <div style={infoStyle.count}>
+          맞은 개수 <span style={infoStyle.corrent}>{state.correctCount}</span>
+        </div>
+        <div style={infoStyle.count}>
+          틀린 개수 <span style={infoStyle.incorrent}>{state.inCorrectCount}</span>
+        </div>
+      </div>
+
+      {state.isCompleted ? (
+        <Link to='/' style={linkStyle}>
+          홈으로
+        </Link>
+      ) : (
+        QuizView(currentQuiz)
+      )}
     </section>
   )
 }

@@ -42,5 +42,6 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "https://solution-tmp.s3.ap-northeast-2.amazonaws.com"
+  "proxy": "https://solution-tmp.s3.ap-northeast-2.amazonaws.com",
+  "devDependencies": {}
 }
