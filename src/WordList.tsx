@@ -1,3 +1,5 @@
+import axios from 'axios'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 interface Word {
@@ -31,10 +33,27 @@ function WordList() {
     { text: 'brick', meaning: 'n. 벽돌' },
     { text: 'leap', meaning: 'v. 뛰다, 급증하다' }
   ]
+  const [newWord, setNewWord] = useState([])
+
+  axios.defaults.withCredentials = true
+
+  useEffect(() => {
+    const listAPI = async () => {
+      try {
+        const resultAPI = await axios.get(`/vocabs.json`)
+        setNewWord(resultAPI.data)
+        const result = resultAPI.data
+        wordlist.splice(0, 3).push.apply(wordlist, result)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    listAPI()
+  }, [])
 
   return (
     <section>
-      {wordlist.map((word) => WordView(word))}
+      {newWord.map((word) => WordView(word))}
       <Link to='/' style={linkStyle}>
         홈으로
       </Link>

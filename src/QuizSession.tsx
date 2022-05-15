@@ -60,6 +60,8 @@ function QuizSessionView(state: State, onClick: (selected: string) => void) {
       padding: '8px',
       background: '#efefef'
     }
+
+    // 퀴즈와 선택항목 부분
     return (
       <article style={articleStyle}>
         <header>{quiz.text}</header>
@@ -87,7 +89,7 @@ function QuizSessionView(state: State, onClick: (selected: string) => void) {
 }
 
 function QuizSession() {
-  const [initalLoaded, setInitalLoaded] = useState(false)
+  const [initalLoaded, setInitalLoaded] = useState(false) // 로딩 상태
   const [state, setState] = useState<State | null>(null)
 
   const initState: () => Promise<State> = async () => {
@@ -142,25 +144,46 @@ function QuizSession() {
     // 해당 단어의 뜻 하나와 다른 단어의 뜻 둘을 포함하여
     // 3지 선다형 뜻 찾기 문제 보기로 변환한다.
     // 아래 데이터는 예시 데이터이므로 삭제.
+
+    // 퀴즈 리스트 배열 만들기
+    const lists = initialData.map((word, index) => {
+      // selectArray 만들기
+      function selectArray(array: any[]) {
+        // 선지 배열 생성
+        let selectArry: any[] = []
+        // 현재 정답인 word 를 제외한 배열 재할당
+        const answerWord = array.filter((answer) => answer !== word)
+        // 배열 랜덤으로 뽑기
+
+        // 2가지를 랜덤으로 뽑아야하기 때문에 반복문
+        for (let i = 0; i < 2; i++) {
+          if (!selectArry.includes(array)) {
+            const randomWord = answerWord[Math.floor(Math.random() * answerWord.length)]
+            selectArry.push(randomWord.meaning)
+            selectArry.filter((words: any, index: any) => words !== index)
+          }
+        }
+        // 현쟈 word의 정답을 합쳐서 랜덤으로 송출
+        return selectArry.concat(word.meaning).sort(() => Math.random() - 0.5)
+      }
+
+      const randomSelect = selectArray(initialData)
+
+      return {
+        index: index,
+        text: word.text,
+        answer: word.meaning,
+        // 현재 단어와 현재 단어 index와 다른 두개의 단어 word.meaning 담기
+        selections: randomSelect
+      }
+    })
+
     return {
       isCompleted: false,
       correctCount: 0,
       inCorrectCount: 0,
       currentIndex: 0,
-      quizList: [
-        {
-          index: 0,
-          text: 'apple',
-          answer: 'n. 사과',
-          selections: ['n. 사과', 'n. 밀가루 반죽']
-        },
-        {
-          index: 1,
-          text: 'brick',
-          answer: 'n. 벽돌',
-          selections: ['n. 벽돌', 'v. 뛰다, 급증하다']
-        }
-      ],
+      quizList: lists,
       quizResults: []
     }
   }
@@ -187,6 +210,34 @@ function QuizSession() {
       }
     })
     setState(newState)
+
+    // 현재 index 와 퀴즈 리스트 갯수 카운터가 맞으면 끝!
+    if (state.currentIndex + 1 === state.quizList.length) {
+      setState({
+        ...state,
+        isCompleted: true
+      })
+      return
+    }
+    // 선택한 정답
+    let answer = selected
+    // 현재 정답
+    let correctAanswer = state.quizList[state.currentIndex]['answer']
+    if (answer === correctAanswer) {
+      // 정답 이라면
+      setState({
+        ...state,
+        correctCount: state.correctCount + 1,
+        currentIndex: state.currentIndex + 1
+      })
+    } else {
+      // 정답 아니면
+      setState({
+        ...state,
+        inCorrectCount: state.inCorrectCount + 1,
+        currentIndex: state.currentIndex + 1
+      })
+    }
   }
 
   return <div>{state ? QuizSessionView(state, quizSelected) : '로딩중...'}</div>
